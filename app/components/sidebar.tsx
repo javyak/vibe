@@ -4,6 +4,7 @@ import Link from "next/link";
 const navLinks = [
   { name: "Overview", href: "/overview", icon: "🏠" },
   { name: "API Playground", href: "/playground", icon: "🧪" },
+  { name: "Manage API Keys", href: "/dashboards", icon: "🔑" },
   { name: "Use Cases", href: "/use-cases", icon: "💡" },
   { name: "Billing", href: "/billing", icon: "💳" },
   { name: "Settings", href: "/settings", icon: "⚙️" },
