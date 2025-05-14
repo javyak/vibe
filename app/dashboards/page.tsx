@@ -4,6 +4,7 @@ import Sidebar from "../components/sidebar";
 import { ApiKeyTable } from "../components/ApiKeyTable";
 import { Notification } from "../components/Notification";
 import { CreateApiKeyModal } from "../components/CreateApiKeyModal";
+import { ApiKeyTester } from "../components/ApiKeyTester";
 import { useApiKeys } from "../hooks/useApiKeys";
 
 export default function ApiKeyManagement() {
@@ -80,6 +81,9 @@ export default function ApiKeyManagement() {
               onDelete={deleteApiKey}
             />
           </div>
+          
+          {/* API Key Tester */}
+          <ApiKeyTester />
         </div>
 
         {/* Create API Key Modal */}

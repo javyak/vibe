@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Notification } from '../components/Notification';
 import Sidebar from '../components/sidebar';
+import { apiKeyService } from '../services/apiKeyService';
 
 export default function PlaygroundPage() {
   const [apiKey, setApiKey] = useState('');
@@ -18,11 +19,28 @@ export default function PlaygroundPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Store the API key in localStorage for the protected page to access
-    localStorage.setItem('apiKey', apiKey);
-    
-    // Redirect to protected page
-    router.push('/protected');
+    try {
+      const result = await apiKeyService.validateApiKey(apiKey);
+      
+      if (result.valid) {
+        // Store the API key in localStorage for the protected page to access
+        localStorage.setItem('apiKey', apiKey);
+        // Redirect to protected page
+        router.push('/protected');
+      } else {
+        setNotificationProps({
+          message: result.message || 'Invalid API Key',
+          color: 'red'
+        });
+        setShowNotification(true);
+      }
+    } catch (error) {
+      setNotificationProps({
+        message: 'Error validating API key',
+        color: 'red'
+      });
+      setShowNotification(true);
+    }
   };
 
   return (

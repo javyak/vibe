@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Notification } from '../components/Notification';
-import { supabase } from '../lib/supabaseClient';
 import Sidebar from '../components/sidebar';
+import { apiKeyService } from '../services/apiKeyService';
 
 export default function ProtectedPage() {
   const [showNotification, setShowNotification] = useState(false);
@@ -25,27 +25,16 @@ export default function ProtectedPage() {
       }
 
       try {
-        // Query Supabase to check if the API key exists
-        const { data, error } = await supabase
-          .from('api_keys')
-          .select('*')
-          .eq('value', apiKey)
-          .single();
-
-        if (error) {
-          throw error;
-        }
-
-        if (data) {
-          // API key is valid
+        const result = await apiKeyService.validateApiKey(apiKey);
+        
+        if (result.valid) {
           setNotificationProps({
             message: 'Valid API key, /protected can be accessed',
             color: 'green'
           });
         } else {
-          // API key not found
           setNotificationProps({
-            message: 'Invalid API Key',
+            message: result.message || 'Invalid API Key',
             color: 'red'
           });
           // Redirect back to playground after 2 seconds

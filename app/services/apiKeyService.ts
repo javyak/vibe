@@ -27,6 +27,16 @@ export const apiKeyService = {
       }));
   },
 
+  async fetchApiKeyStats(): Promise<{ count: number; totalUsage: number }> {
+    const { data, error } = await supabase
+      .from('api_keys')
+      .select('usage', { count: 'exact' });
+    if (error) throw error;
+    const count = data ? data.length : 0;
+    const totalUsage = data ? data.reduce((sum, k) => sum + (k.usage || 0), 0) : 0;
+    return { count, totalUsage };
+  },
+
   async createApiKey(name: string, value: string): Promise<void> {
     const { error } = await supabase
       .from('api_keys')
@@ -59,6 +69,22 @@ export const apiKeyService = {
 
     if (error) {
       throw error;
+    }
+  },
+  
+  async validateApiKey(apiKey: string): Promise<{ valid: boolean; message: string }> {
+    try {
+      const response = await fetch('/api/validate-key', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ apiKey }),
+      });
+      
+      return await response.json();
+    } catch (error) {
+      return { valid: false, message: 'Error validating API key' };
     }
   }
 }; 
