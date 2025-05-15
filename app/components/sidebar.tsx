@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import UserMenu from "./UserMenu";
+import SignOutButton from "./SignOutButton";
 
 const navLinks = [
   {
@@ -62,7 +64,7 @@ const navLinks = [
 const externalLinks = [
   {
     name: "Documentation",
-    href: "https://docs.example.com",
+    href: "/documentation",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -109,17 +111,8 @@ export default function Sidebar({ visible, onClose }: { visible: boolean; onClos
         <span className="font-bold text-xl tracking-tight text-gray-800 ml-2">vibe</span>
       </div>
 
-      {/* User Dropdown/Profile */}
-      <div className="flex items-center mb-8 px-2">
-        <img
-          src="/avatar.png"
-          alt="User"
-          className="h-8 w-8 rounded-full mr-2 border border-gray-200"
-        />
-        <select className="bg-gray-100 rounded px-2 py-1 text-sm text-gray-700">
-          <option>Personal</option>
-        </select>
-      </div>
+      {/* User Menu */}
+      <UserMenu />
 
       {/* Navigation */}
       <nav className="flex-1">
@@ -140,33 +133,48 @@ export default function Sidebar({ visible, onClose }: { visible: boolean; onClos
           <ul className="space-y-1">
             {externalLinks.map((link) => (
               <li key={link.name}>
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium"
-                >
-                  <span className="mr-3 text-gray-500">{link.icon}</span>
-                  {link.name}
-                  <svg
-                    className="ml-2 w-4 h-4 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                {link.href.startsWith('/') ? (
+                  <Link
+                    href={link.href}
+                    className="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
-                </a>
+                    <span className="mr-3 text-gray-500">{link.icon}</span>
+                    {link.name}
+                  </Link>
+                ) : (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition font-medium"
+                  >
+                    <span className="mr-3 text-gray-500">{link.icon}</span>
+                    {link.name}
+                    <svg
+                      className="ml-2 w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
+                )}
               </li>
             ))}
           </ul>
         </div>
       </nav>
+      
+      {/* Sign Out Button */}
+      <div className="mt-auto pt-4 border-t border-gray-100">
+        <SignOutButton />
+      </div>
     </aside>
   );
 }

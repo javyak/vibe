@@ -48,6 +48,17 @@ export default function PlaygroundPage() {
       {/* Sidebar */}
       <Sidebar visible={sidebarVisible} onClose={() => setSidebarVisible(false)} />
 
+      {/* Hamburger button: only show when sidebar is hidden */}
+      {!sidebarVisible && (
+        <button
+          className="fixed top-4 left-4 z-50 bg-white rounded-full shadow p-2 text-2xl"
+          onClick={() => setSidebarVisible(true)}
+          aria-label="Open sidebar"
+        >
+          ☰
+        </button>
+      )}
+
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
@@ -93,4 +104,4 @@ export default function PlaygroundPage() {
       )}
     </div>
   );
-} 
+}
