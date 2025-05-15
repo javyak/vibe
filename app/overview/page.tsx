@@ -107,7 +107,7 @@ export default function OverviewPage() {
           {/* Usage Graph Card */}
           <div className="bg-white rounded-2xl shadow p-6 mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg text-gray-600">API Key Usage</h2>
+              <h2 className="text-lg text-gray-600">Top 10 API Key Usage</h2>
             </div>
             <UsageChart data={chartData} />
           </div>

@@ -1,69 +1,37 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Notification } from '../components/Notification';
 import Sidebar from '../components/sidebar';
-import { apiKeyService } from '../services/apiKeyService';
 
 export default function ProtectedPage() {
-  const [showNotification, setShowNotification] = useState(false);
+  const { data: session } = useSession();
+  const [showNotification, setShowNotification] = useState(true);
   const [notificationProps, setNotificationProps] = useState<{
     message: string;
     color: 'green' | 'red';
-  }>({ message: '', color: 'green' });
+  }>({ 
+    message: 'You have successfully accessed the protected page!', 
+    color: 'green' 
+  });
   const [sidebarVisible, setSidebarVisible] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    const validateApiKey = async () => {
-      const apiKey = localStorage.getItem('apiKey');
-      
-      if (!apiKey) {
-        router.push('/playground');
-        return;
-      }
-
-      try {
-        const result = await apiKeyService.validateApiKey(apiKey);
-        
-        if (result.valid) {
-          setNotificationProps({
-            message: 'Valid API key, /protected can be accessed',
-            color: 'green'
-          });
-        } else {
-          setNotificationProps({
-            message: result.message || 'Invalid API Key',
-            color: 'red'
-          });
-          // Redirect back to playground after 2 seconds
-          setTimeout(() => {
-            router.push('/playground');
-          }, 2000);
-        }
-      } catch (error) {
-        console.error('Error validating API key:', error);
-        setNotificationProps({
-          message: 'Error validating API key',
-          color: 'red'
-        });
-        // Redirect back to playground after 2 seconds
-        setTimeout(() => {
-          router.push('/playground');
-        }, 2000);
-      }
-      
-      setShowNotification(true);
-    };
-
-    validateApiKey();
-  }, [router]);
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar visible={sidebarVisible} onClose={() => setSidebarVisible(false)} />
+
+      {/* Hamburger button: only show when sidebar is hidden */}
+      {!sidebarVisible && (
+        <button
+          className="fixed top-4 left-4 z-50 bg-white rounded-full shadow p-2 text-2xl"
+          onClick={() => setSidebarVisible(true)}
+          aria-label="Open sidebar"
+        >
+          ☰
+        </button>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-4">
@@ -71,11 +39,34 @@ export default function ProtectedPage() {
           <h2 className="text-center text-3xl font-extrabold text-gray-900">
             Protected Content
           </h2>
-          <p className="text-center text-gray-600">
-            This is a protected page that requires a valid API key.
-          </p>
+          
+          {session ? (
+            <div className="space-y-6">
+              <div className="flex items-center justify-center flex-col space-y-4">
+                <img 
+                  src={session.user.image || "/avatar.png"} 
+                  alt={session.user.name || "User"}
+                  className="h-20 w-20 rounded-full border-2 border-blue-500" 
+                />
+                <h3 className="text-xl font-bold">{session.user.name}</h3>
+                <p className="text-gray-600">{session.user.email}</p>
+              </div>
+              
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-medium text-blue-700 mb-2">User Session Info</h4>
+                <pre className="text-xs overflow-auto p-2 bg-white rounded border border-blue-100">
+                  {JSON.stringify(session, null, 2)}
+                </pre>
+              </div>
+            </div>
+          ) : (
+            <p className="text-center text-gray-600">
+              Loading user information...
+            </p>
+          )}
         </div>
       </div>
+      
       {showNotification && (
         <Notification
           message={notificationProps.message}
