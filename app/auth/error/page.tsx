@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import React, { Suspense } from "react";
 
-export default function AuthError() {
+function AuthErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
 
@@ -50,5 +51,28 @@ export default function AuthError() {
         </div>
       </main>
     </div>
+  );
+}
+
+// Define a fallback component for the Suspense boundary
+function AuthErrorFallback() {
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+      <main className="flex flex-col gap-[32px] row-start-2 items-center">
+        <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
+          <h2 className="text-2xl font-bold mb-4">Loading...</h2>
+          <p className="text-gray-700">Please wait while we load your authentication information.</p>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// Export the main component with Suspense
+export default function AuthError() {
+  return (
+    <Suspense fallback={<AuthErrorFallback />}>
+      <AuthErrorContent />
+    </Suspense>
   );
 }
